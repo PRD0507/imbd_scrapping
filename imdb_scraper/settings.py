@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'imdb_scraper_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'USER': 'imdb_user',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
     }
