@@ -11,6 +11,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
@@ -30,7 +31,7 @@ class MovieViewSet(viewsets.ModelViewSet):
         try:
             async with IMDbScraper(max_pages=max_pages) as scraper:
                 movies = await scraper.search_movies(genre_or_keyword)
-                
+
                 # Save movies to database
                 saved_movies = []
                 for movie in movies:
