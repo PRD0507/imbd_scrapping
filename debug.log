@@ -1,0 +1,159 @@
+INFO 2025-05-31 13:42:27,380 scraper 24296 6203387904 Successfully fetched page 1
+INFO 2025-05-31 13:42:27,447 scraper 24296 6203387904 Found 25 movie items on page 1
+INFO 2025-05-31 13:42:27,447 scraper 24296 6203387904 Parsed movie: Lilo & Stitch (2025)
+INFO 2025-05-31 13:42:27,448 scraper 24296 6203387904 Parsed movie: Nonnas (2025)
+INFO 2025-05-31 13:42:27,448 scraper 24296 6203387904 Parsed movie: Mickey 17 (2025)
+INFO 2025-05-31 13:42:27,448 scraper 24296 6203387904 Parsed movie: A Minecraft Movie (2025)
+INFO 2025-05-31 13:42:27,449 scraper 24296 6203387904 Parsed movie: The Ugly Stepsister (2025)
+INFO 2025-05-31 13:42:27,449 scraper 24296 6203387904 Parsed movie: The Phoenician Scheme (2025)
+INFO 2025-05-31 13:42:27,449 scraper 24296 6203387904 Parsed movie: Lilo & Stitch (2002)
+INFO 2025-05-31 13:42:27,450 scraper 24296 6203387904 Parsed movie: Friendship (2024)
+INFO 2025-05-31 13:42:27,450 scraper 24296 6203387904 Parsed movie: Die, My Love (2025)
+INFO 2025-05-31 13:42:27,450 scraper 24296 6203387904 Parsed movie: Novocaine (2025)
+INFO 2025-05-31 13:42:27,451 scraper 24296 6203387904 Parsed movie: How to Train Your Dragon (2025)
+INFO 2025-05-31 13:42:27,451 scraper 24296 6203387904 Parsed movie: Eddington (2025)
+INFO 2025-05-31 13:42:27,451 scraper 24296 6203387904 Parsed movie: Anora (2024)
+INFO 2025-05-31 13:42:27,451 scraper 24296 6203387904 Parsed movie: Another Simple Favor (2025)
+INFO 2025-05-31 13:42:27,452 scraper 24296 6203387904 Parsed movie: Sentimental Value (2025)
+INFO 2025-05-31 13:42:27,452 scraper 24296 6203387904 Parsed movie: Materialists (2025)
+INFO 2025-05-31 13:42:27,452 scraper 24296 6203387904 Parsed movie: Death of a Unicorn (2025)
+INFO 2025-05-31 13:42:27,453 scraper 24296 6203387904 Parsed movie: Zootopia 2 (2025)
+INFO 2025-05-31 13:42:27,453 scraper 24296 6203387904 Parsed movie: A Simple Favor (2018)
+INFO 2025-05-31 13:42:27,453 scraper 24296 6203387904 Parsed movie: Instant Family (2018)
+INFO 2025-05-31 13:42:27,453 scraper 24296 6203387904 Parsed movie: Beetlejuice Beetlejuice (2024)
+INFO 2025-05-31 13:42:27,454 scraper 24296 6203387904 Parsed movie: Caught Stealing (2025)
+INFO 2025-05-31 13:42:27,454 scraper 24296 6203387904 Parsed movie: The Four Seasons (1981)
+INFO 2025-05-31 13:42:27,454 scraper 24296 6203387904 Parsed movie: The Electric State (2025)
+INFO 2025-05-31 13:42:27,455 scraper 24296 6203387904 Parsed movie: The Princess Bride (1987)
+INFO 2025-05-31 13:42:27,455 scraper 24296 6203387904 Parsed 25 movies from page 1
+INFO 2025-05-31 13:42:31,345 scraper 24296 6203387904 Successfully fetched page 2
+INFO 2025-05-31 13:42:31,416 scraper 24296 6203387904 Found 25 movie items on page 2
+INFO 2025-05-31 13:42:31,416 scraper 24296 6203387904 Parsed movie: Lilo & Stitch (2025)
+INFO 2025-05-31 13:42:31,417 scraper 24296 6203387904 Parsed movie: Nonnas (2025)
+INFO 2025-05-31 13:42:31,417 scraper 24296 6203387904 Parsed movie: Mickey 17 (2025)
+INFO 2025-05-31 13:42:31,417 scraper 24296 6203387904 Parsed movie: A Minecraft Movie (2025)
+INFO 2025-05-31 13:42:31,418 scraper 24296 6203387904 Parsed movie: The Ugly Stepsister (2025)
+INFO 2025-05-31 13:42:31,418 scraper 24296 6203387904 Parsed movie: The Phoenician Scheme (2025)
+INFO 2025-05-31 13:42:31,418 scraper 24296 6203387904 Parsed movie: Lilo & Stitch (2002)
+INFO 2025-05-31 13:42:31,418 scraper 24296 6203387904 Parsed movie: Friendship (2024)
+INFO 2025-05-31 13:42:31,419 scraper 24296 6203387904 Parsed movie: Die, My Love (2025)
+INFO 2025-05-31 13:42:31,419 scraper 24296 6203387904 Parsed movie: Novocaine (2025)
+INFO 2025-05-31 13:42:31,419 scraper 24296 6203387904 Parsed movie: How to Train Your Dragon (2025)
+INFO 2025-05-31 13:42:31,419 scraper 24296 6203387904 Parsed movie: Eddington (2025)
+INFO 2025-05-31 13:42:31,420 scraper 24296 6203387904 Parsed movie: Anora (2024)
+INFO 2025-05-31 13:42:31,420 scraper 24296 6203387904 Parsed movie: Another Simple Favor (2025)
+INFO 2025-05-31 13:42:31,420 scraper 24296 6203387904 Parsed movie: Sentimental Value (2025)
+INFO 2025-05-31 13:42:31,421 scraper 24296 6203387904 Parsed movie: Materialists (2025)
+INFO 2025-05-31 13:42:31,421 scraper 24296 6203387904 Parsed movie: Death of a Unicorn (2025)
+INFO 2025-05-31 13:42:31,421 scraper 24296 6203387904 Parsed movie: Zootopia 2 (2025)
+INFO 2025-05-31 13:42:31,421 scraper 24296 6203387904 Parsed movie: A Simple Favor (2018)
+INFO 2025-05-31 13:42:31,422 scraper 24296 6203387904 Parsed movie: Instant Family (2018)
+INFO 2025-05-31 13:42:31,422 scraper 24296 6203387904 Parsed movie: Beetlejuice Beetlejuice (2024)
+INFO 2025-05-31 13:42:31,422 scraper 24296 6203387904 Parsed movie: Caught Stealing (2025)
+INFO 2025-05-31 13:42:31,422 scraper 24296 6203387904 Parsed movie: The Four Seasons (1981)
+INFO 2025-05-31 13:42:31,423 scraper 24296 6203387904 Parsed movie: The Electric State (2025)
+INFO 2025-05-31 13:42:31,423 scraper 24296 6203387904 Parsed movie: The Princess Bride (1987)
+INFO 2025-05-31 13:42:31,423 scraper 24296 6203387904 Parsed 25 movies from page 2
+INFO 2025-05-31 13:42:31,433 views 24296 6203387904 Saved movie: Lilo & Stitch (2025)
+INFO 2025-05-31 13:42:31,434 views 24296 6203387904 Saved movie: Nonnas (2025)
+INFO 2025-05-31 13:42:31,435 views 24296 6203387904 Saved movie: Mickey 17 (2025)
+INFO 2025-05-31 13:42:31,436 views 24296 6203387904 Saved movie: A Minecraft Movie (2025)
+INFO 2025-05-31 13:42:31,436 views 24296 6203387904 Saved movie: The Ugly Stepsister (2025)
+INFO 2025-05-31 13:42:31,437 views 24296 6203387904 Saved movie: The Phoenician Scheme (2025)
+INFO 2025-05-31 13:42:31,437 views 24296 6203387904 Saved movie: Lilo & Stitch (2002)
+INFO 2025-05-31 13:42:31,437 views 24296 6203387904 Saved movie: Friendship (2024)
+INFO 2025-05-31 13:42:31,438 views 24296 6203387904 Saved movie: Die, My Love (2025)
+INFO 2025-05-31 13:42:31,438 views 24296 6203387904 Saved movie: Novocaine (2025)
+INFO 2025-05-31 13:42:31,439 views 24296 6203387904 Saved movie: How to Train Your Dragon (2025)
+INFO 2025-05-31 13:42:31,439 views 24296 6203387904 Saved movie: Eddington (2025)
+INFO 2025-05-31 13:42:31,440 views 24296 6203387904 Saved movie: Anora (2024)
+INFO 2025-05-31 13:42:31,441 views 24296 6203387904 Saved movie: Another Simple Favor (2025)
+INFO 2025-05-31 13:42:31,441 views 24296 6203387904 Saved movie: Sentimental Value (2025)
+INFO 2025-05-31 13:42:31,441 views 24296 6203387904 Saved movie: Materialists (2025)
+INFO 2025-05-31 13:42:31,442 views 24296 6203387904 Saved movie: Death of a Unicorn (2025)
+INFO 2025-05-31 13:42:31,442 views 24296 6203387904 Saved movie: Zootopia 2 (2025)
+INFO 2025-05-31 13:42:31,443 views 24296 6203387904 Saved movie: A Simple Favor (2018)
+INFO 2025-05-31 13:42:31,443 views 24296 6203387904 Saved movie: Instant Family (2018)
+INFO 2025-05-31 13:42:31,443 views 24296 6203387904 Saved movie: Beetlejuice Beetlejuice (2024)
+INFO 2025-05-31 13:42:31,444 views 24296 6203387904 Saved movie: Caught Stealing (2025)
+INFO 2025-05-31 13:42:31,444 views 24296 6203387904 Saved movie: The Four Seasons (1981)
+INFO 2025-05-31 13:42:31,444 views 24296 6203387904 Saved movie: The Electric State (2025)
+INFO 2025-05-31 13:42:31,445 views 24296 6203387904 Saved movie: The Princess Bride (1987)
+INFO 2025-05-31 13:42:31,445 views 24296 6203387904 Saved movie: Lilo & Stitch (2025)
+INFO 2025-05-31 13:42:31,446 views 24296 6203387904 Saved movie: Nonnas (2025)
+INFO 2025-05-31 13:42:31,446 views 24296 6203387904 Saved movie: Mickey 17 (2025)
+INFO 2025-05-31 13:42:31,446 views 24296 6203387904 Saved movie: A Minecraft Movie (2025)
+INFO 2025-05-31 13:42:31,447 views 24296 6203387904 Saved movie: The Ugly Stepsister (2025)
+INFO 2025-05-31 13:42:31,447 views 24296 6203387904 Saved movie: The Phoenician Scheme (2025)
+INFO 2025-05-31 13:42:31,448 views 24296 6203387904 Saved movie: Lilo & Stitch (2002)
+INFO 2025-05-31 13:42:31,448 views 24296 6203387904 Saved movie: Friendship (2024)
+INFO 2025-05-31 13:42:31,449 views 24296 6203387904 Saved movie: Die, My Love (2025)
+INFO 2025-05-31 13:42:31,449 views 24296 6203387904 Saved movie: Novocaine (2025)
+INFO 2025-05-31 13:42:31,449 views 24296 6203387904 Saved movie: How to Train Your Dragon (2025)
+INFO 2025-05-31 13:42:31,450 views 24296 6203387904 Saved movie: Eddington (2025)
+INFO 2025-05-31 13:42:31,450 views 24296 6203387904 Saved movie: Anora (2024)
+INFO 2025-05-31 13:42:31,450 views 24296 6203387904 Saved movie: Another Simple Favor (2025)
+INFO 2025-05-31 13:42:31,451 views 24296 6203387904 Saved movie: Sentimental Value (2025)
+INFO 2025-05-31 13:42:31,451 views 24296 6203387904 Saved movie: Materialists (2025)
+INFO 2025-05-31 13:42:31,451 views 24296 6203387904 Saved movie: Death of a Unicorn (2025)
+INFO 2025-05-31 13:42:31,452 views 24296 6203387904 Saved movie: Zootopia 2 (2025)
+INFO 2025-05-31 13:42:31,452 views 24296 6203387904 Saved movie: A Simple Favor (2018)
+INFO 2025-05-31 13:42:31,452 views 24296 6203387904 Saved movie: Instant Family (2018)
+INFO 2025-05-31 13:42:31,453 views 24296 6203387904 Saved movie: Beetlejuice Beetlejuice (2024)
+INFO 2025-05-31 13:42:31,454 views 24296 6203387904 Saved movie: Caught Stealing (2025)
+INFO 2025-05-31 13:42:31,454 views 24296 6203387904 Saved movie: The Four Seasons (1981)
+INFO 2025-05-31 13:42:31,454 views 24296 6203387904 Saved movie: The Electric State (2025)
+INFO 2025-05-31 13:42:31,454 views 24296 6203387904 Saved movie: The Princess Bride (1987)
+INFO 2025-05-31 13:42:31,455 views 24296 6203387904 Successfully scraped and saved 50 movies
+ERROR 2025-05-31 13:47:32,274 scraper 26479 6205009920 Failed to fetch page 1: Status 404
+ERROR 2025-05-31 13:47:35,610 scraper 26479 6205009920 Failed to fetch page 2: Status 404
+ERROR 2025-05-31 13:47:38,046 scraper 26479 6205009920 Failed to fetch page 3: Status 404
+INFO 2025-05-31 13:47:38,050 views 26479 6205009920 Successfully scraped and saved 0 movies
+ERROR 2025-05-31 13:47:51,267 scraper 26479 6221836288 Failed to fetch page 1: Status 404
+ERROR 2025-05-31 13:47:55,019 scraper 26479 6221836288 Failed to fetch page 2: Status 404
+ERROR 2025-05-31 13:47:56,893 scraper 26479 6221836288 Failed to fetch page 3: Status 404
+INFO 2025-05-31 13:47:56,897 views 26479 6221836288 Successfully scraped and saved 0 movies
+ERROR 2025-05-31 13:48:07,389 scraper 26479 6221836288 Failed to fetch page 1: Status 404
+INFO 2025-05-31 13:48:07,394 views 26479 6221836288 Successfully scraped and saved 0 movies
+INFO 2025-05-31 13:48:36,812 scraper 26764 6156070912 Searching with URL: https://www.imdb.com/search/title/?title=The+Shawshank+Redemption&sort=popularity,asc&title_type=feature
+INFO 2025-05-31 13:48:36,812 scraper 26764 6156070912 Fetching page 1 with URL: https://www.imdb.com/search/title/?title=The+Shawshank+Redemption&sort=popularity,asc&title_type=feature&start=1
+INFO 2025-05-31 13:48:38,148 scraper 26764 6156070912 Successfully fetched page 1
+INFO 2025-05-31 13:48:38,199 scraper 26764 6156070912 Found 1 movie items on page 1
+INFO 2025-05-31 13:48:38,199 scraper 26764 6156070912 Found movie: The Shawshank Redemption
+INFO 2025-05-31 13:48:38,199 scraper 26764 6156070912 Found movie URL: https://www.imdb.com/title/tt0111161/?ref_=sr_t_1
+INFO 2025-05-31 13:48:38,200 scraper 26764 6156070912 Parsed movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:38,200 scraper 26764 6156070912 Parsed 1 movies from page 1
+INFO 2025-05-31 13:48:41,151 scraper 26764 6156070912 Retrieved details for 'The Shawshank Redemption'
+INFO 2025-05-31 13:48:41,152 scraper 26764 6156070912 Total movies found: 1
+INFO 2025-05-31 13:48:41,161 views 26764 6156070912 Saved movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:41,161 views 26764 6156070912 Successfully scraped and saved 1 movies
+INFO 2025-05-31 13:48:46,089 scraper 26764 6156070912 Searching with URL: https://www.imdb.com/search/title/?title=The+Shawshank+Redemption&sort=popularity,asc&title_type=feature
+INFO 2025-05-31 13:48:46,089 scraper 26764 6156070912 Fetching page 1 with URL: https://www.imdb.com/search/title/?title=The+Shawshank+Redemption&sort=popularity,asc&title_type=feature&start=1
+INFO 2025-05-31 13:48:47,018 scraper 26764 6156070912 Successfully fetched page 1
+INFO 2025-05-31 13:48:47,087 scraper 26764 6156070912 Found 1 movie items on page 1
+INFO 2025-05-31 13:48:47,087 scraper 26764 6156070912 Found movie: The Shawshank Redemption
+INFO 2025-05-31 13:48:47,088 scraper 26764 6156070912 Found movie URL: https://www.imdb.com/title/tt0111161/?ref_=sr_t_1
+INFO 2025-05-31 13:48:47,088 scraper 26764 6156070912 Parsed movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:47,088 scraper 26764 6156070912 Parsed 1 movies from page 1
+INFO 2025-05-31 13:48:49,232 scraper 26764 6156070912 Retrieved details for 'The Shawshank Redemption'
+INFO 2025-05-31 13:48:51,167 scraper 26764 6156070912 Fetching page 2 with URL: https://www.imdb.com/search/title/?title=The+Shawshank+Redemption&sort=popularity,asc&title_type=feature&start=51
+INFO 2025-05-31 13:48:52,372 scraper 26764 6156070912 Successfully fetched page 2
+INFO 2025-05-31 13:48:52,411 scraper 26764 6156070912 Found 1 movie items on page 2
+INFO 2025-05-31 13:48:52,411 scraper 26764 6156070912 Found movie: The Shawshank Redemption
+INFO 2025-05-31 13:48:52,412 scraper 26764 6156070912 Found movie URL: https://www.imdb.com/title/tt0111161/?ref_=sr_t_1
+INFO 2025-05-31 13:48:52,412 scraper 26764 6156070912 Parsed movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:52,412 scraper 26764 6156070912 Parsed 1 movies from page 2
+INFO 2025-05-31 13:48:54,636 scraper 26764 6156070912 Retrieved details for 'The Shawshank Redemption'
+INFO 2025-05-31 13:48:56,647 scraper 26764 6156070912 Fetching page 3 with URL: https://www.imdb.com/search/title/?title=The+Shawshank+Redemption&sort=popularity,asc&title_type=feature&start=101
+INFO 2025-05-31 13:48:57,579 scraper 26764 6156070912 Successfully fetched page 3
+INFO 2025-05-31 13:48:57,627 scraper 26764 6156070912 Found 1 movie items on page 3
+INFO 2025-05-31 13:48:57,628 scraper 26764 6156070912 Found movie: The Shawshank Redemption
+INFO 2025-05-31 13:48:57,628 scraper 26764 6156070912 Found movie URL: https://www.imdb.com/title/tt0111161/?ref_=sr_t_1
+INFO 2025-05-31 13:48:57,628 scraper 26764 6156070912 Parsed movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:57,628 scraper 26764 6156070912 Parsed 1 movies from page 3
+INFO 2025-05-31 13:48:59,726 scraper 26764 6156070912 Retrieved details for 'The Shawshank Redemption'
+INFO 2025-05-31 13:48:59,727 scraper 26764 6156070912 Total movies found: 3
+INFO 2025-05-31 13:48:59,749 views 26764 6156070912 Saved movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:59,750 views 26764 6156070912 Saved movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:59,750 views 26764 6156070912 Saved movie: The Shawshank Redemption (1994)
+INFO 2025-05-31 13:48:59,750 views 26764 6156070912 Successfully scraped and saved 3 movies

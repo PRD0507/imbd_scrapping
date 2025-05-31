@@ -267,7 +267,9 @@ class IMDbScraper:
             # Extract directors
             directors = []
             # Try new structure first
-            director_section = soup.select_one('[data-testid="title-pc-principal-credit"]:has(span:contains("Director"))')
+            director_section = soup.select_one(
+                '[data-testid="title-pc-principal-credit"]:has(span:contains("Director"))'
+            )
             if director_section:
                 director_links = director_section.select('a')
                 directors = [a.text.strip() for a in director_links]
