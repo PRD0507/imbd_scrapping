@@ -1,119 +1,92 @@
-# IMDb Movie Scraper
+# IMDB Scraper
 
-A Django-based web scraper that extracts movie information from IMDb, with REST API support and data persistence.
+This project is a Django-based web application that scrapes movie data from IMDB and provides a RESTful API to search, filter, and manage movies.
 
-## Features
+## Project Setup
 
-- Search movies by genre or keyword
-- Extract detailed movie information including:
-  - Title
-  - Release Year
-  - IMDb Rating
-  - Director(s)
-  - Cast
-  - Plot Summary
-- Pagination support for multiple search result pages
-- REST API endpoints for accessing scraped data
-- Asynchronous scraping for better performance
-- Error handling and logging
-- Unit tests
+### Prerequisites
+- Python 3.11 or higher
+- pip (Python package manager)
+- virtualenv (recommended)
 
-## Prerequisites
-
-- Python 3.8 or higher
-- pip (Python package installer)
-
-## Installation
-
+### Installation Steps
 1. Clone the repository:
-```bash
-git clone <repository-url>
-cd imdb-scraper
-```
+   ```bash
+   git clone <repository-url>
+   cd imbd_scrapping
+   ```
 
 2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   ```
 
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4. Set up the database:
-```bash
-python manage.py migrate
-```
+4. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
 
-5. Create a superuser (optional):
-```bash
-python manage.py createsuperuser
-```
-
-## Usage
-
-1. Start the development server:
-```bash
-python manage.py runserver
-```
-
-2. Access the API endpoints:
-- API Root: http://localhost:8000/api/
-- Admin Interface: http://localhost:8000/admin/
-
-3. Run the scraper:
-```bash
-python manage.py scrape_movies --genre "comedy" --pages 3
-```
+5. Start the development server:
+   ```bash
+   python manage.py runserver
+   ```
 
 ## API Endpoints
 
-- `GET /api/movies/` - List all movies
-- `GET /api/movies/{id}/` - Get movie details
-- `POST /api/movies/scrape/` - Trigger scraping for specific genre/keyword
+### Movies API
 
-## Running Tests
+#### GET /api/movies/
+- **Description:** Lists all active movies.
+- **Logic:** Uses the `MovieManager` to filter out inactive movies.
 
+#### GET /api/movies/{id}/
+- **Description:** Retrieves a specific movie by ID.
+- **Logic:** Returns a 404 if the movie is not found or is inactive.
+
+#### POST /api/movies/
+- **Description:** Creates a new movie.
+- **Logic:** Validates input data and saves the movie to the database.
+
+#### PUT /api/movies/{id}/
+- **Description:** Updates an existing movie.
+- **Logic:** Validates input data and updates the movie in the database.
+
+#### DELETE /api/movies/{id}/
+- **Description:** Soft deletes a movie (sets `is_active` to `False`).
+- **Logic:** Updates the movie's `is_active` field and sets `updated_by` to the current user.
+
+### Scraper API
+
+#### GET /api/scrape/
+- **Description:** Triggers the IMDB scraper to fetch and store movie data.
+- **Logic:** Uses the `IMDbScraper` class to search IMDB, parse results, and save movies to the database.
+
+## Project Structure
+
+- `movies/models.py`: Defines the `Movie` model and custom manager.
+- `movies/views.py`: Contains the `MovieViewSet` for handling API requests.
+- `movies/scraper.py`: Implements the `IMDbScraper` class for fetching and parsing IMDB data.
+- `movies/tests/`: Contains test cases for models, views, and the scraper.
+
+## Testing
+
+Run tests with:
 ```bash
 pytest
 ```
 
-## Project Structure
-
+Check coverage with:
+```bash
+coverage run -m pytest
+coverage report -m
 ```
-imdb_scraper/
-├── movies/              # Main app directory
-│   ├── models.py       # Database models
-│   ├── views.py        # API views
-│   ├── serializers.py  # API serializers
-│   ├── urls.py         # URL routing
-│   └── scraper.py      # Scraping logic
-├── imdb_scraper/       # Project settings
-├── tests/              # Test directory
-└── manage.py           # Django management script
-```
-
-## Error Handling
-
-The scraper includes comprehensive error handling for:
-- Network issues
-- Invalid responses
-- Rate limiting
-- Missing data
-- Database errors
-
-All errors are logged with appropriate severity levels.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License. 
