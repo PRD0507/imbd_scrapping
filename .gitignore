@@ -41,4 +41,13 @@ media/
 # macOS
 .DS_Store
 .AppleDouble
-.LSOverride 
+.LSOverride
+
+# Coverage files
+.coverage
+coverage.xml
+htmlcov/
+
+# Log files
+*.log
+debug.log 
