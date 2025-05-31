@@ -5,6 +5,7 @@ User = get_user_model()
 
 # Create your models here.
 
+
 class MovieManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True)
@@ -14,12 +15,15 @@ class MovieManager(models.Manager):
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=200)
-    release_year = models.IntegerField()
+    title = models.CharField(max_length=200, null=True, blank=True)
+    release_year = models.IntegerField()  # Only mandatory field
     imdb_rating = models.FloatField(null=True, blank=True)
-    directors = models.TextField()  # Stored as comma-separated values
-    cast = models.TextField()  # Stored as comma-separated values
-    plot_summary = models.TextField()
+    # Stored as comma-separated values
+    directors = models.TextField(null=True, blank=True)
+    # Stored as comma-separated values  
+    cast = models.TextField(null=True, blank=True)
+    plot_summary = models.TextField(null=True, blank=True)
+    imdb_url = models.URLField(max_length=500, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -51,12 +55,17 @@ class Movie(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.title} ({self.release_year})"
+        title_display = self.title or "Untitled"
+        return f"{title_display} ({self.release_year})"
 
     def get_directors_list(self):
+        if not self.directors:
+            return []
         return [d.strip() for d in self.directors.split(',')]
 
     def get_cast_list(self):
+        if not self.cast:
+            return []
         return [c.strip() for c in self.cast.split(',')]
 
     def delete(self, using=None, keep_parents=False, updated_by=None):
