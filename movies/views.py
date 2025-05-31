@@ -77,7 +77,9 @@ class MovieViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @swagger_auto_schema(
-        operation_description="Scrape movies from IMDB by genre or keyword",
+        operation_description=(
+            "Scrape movies from IMDB by genre or keyword"
+        ),
         request_body=ScrapeRequestSerializer,
         responses={
             201: openapi.Response(
@@ -88,7 +90,7 @@ class MovieViewSet(viewsets.ModelViewSet):
                 description="Bad request",
                 examples={
                     "application/json": {
-                        "error": "At least one search parameter must be provided"
+                        "error": "Search parameter required"
                     }
                 }
             ),
