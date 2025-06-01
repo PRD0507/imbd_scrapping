@@ -15,15 +15,15 @@ class MovieManager(models.Manager):
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=200, null=True, blank=True)
-    release_year = models.IntegerField()  # Only mandatory field
-    imdb_rating = models.FloatField(null=True, blank=True)
+    title = models.CharField(max_length=200)
+    release_year = models.IntegerField()
+    imdb_rating = models.FloatField()
     # Stored as comma-separated values
-    directors = models.TextField(null=True, blank=True)
+    directors = models.TextField()
     # Stored as comma-separated values  
-    cast = models.TextField(null=True, blank=True)
-    plot_summary = models.TextField(null=True, blank=True)
-    imdb_url = models.URLField(max_length=500, null=True, blank=True)
+    cast = models.TextField()
+    plot_summary = models.TextField()
+    imdb_url = models.URLField(max_length=500)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -55,8 +55,7 @@ class Movie(models.Model):
         ]
 
     def __str__(self):
-        title_display = self.title or "Untitled"
-        return f"{title_display} ({self.release_year})"
+        return f"{self.title} ({self.release_year})"
 
     def get_directors_list(self):
         if not self.directors:

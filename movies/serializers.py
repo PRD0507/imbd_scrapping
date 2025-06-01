@@ -20,32 +20,22 @@ class MovieSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at', 'updated_at']
         extra_kwargs = {
             'title': {
-                'required': False,
-                'allow_blank': True,
-                'help_text': 'Movie title (optional)'
+                'help_text': 'Movie title'
             },
             'release_year': {
-                'required': True,
-                'help_text': 'Year the movie was released (required)'
+                'help_text': 'Year the movie was released'
             },
             'imdb_rating': {
-                'required': False,
-                'help_text': 'IMDB rating (0.0-10.0, optional)'
+                'help_text': 'IMDB rating (0.0-10.0)'
             },
             'directors': {
-                'required': False,
-                'allow_blank': True,
-                'help_text': 'Directors as comma-separated string (optional)'
+                'help_text': 'Directors as comma-separated string'
             },
             'cast': {
-                'required': False,
-                'allow_blank': True,
-                'help_text': 'Cast members as comma-separated string (optional)'
+                'help_text': 'Cast members as comma-separated string'
             },
             'plot_summary': {
-                'required': False,
-                'allow_blank': True,
-                'help_text': 'Plot summary of the movie (optional)'
+                'help_text': 'Plot summary of the movie'
             }
         }
 
