@@ -123,4 +123,34 @@ class ScrapeRequestSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     "min_rating cannot be greater than max_rating"
                 )
-        return data 
+        return data
+
+
+class MovieSearchInputSerializer(serializers.Serializer):
+    """Input serializer for movie search parameters."""
+    id = serializers.IntegerField(required=False, help_text="Search by movie ID")
+    title = serializers.CharField(required=False, help_text="Search by movie title (partial match)")
+    release_year = serializers.IntegerField(required=False, help_text="Filter by release year")
+    min_rating = serializers.FloatField(required=False, help_text="Minimum IMDB rating (0.0-10.0)")
+    max_rating = serializers.FloatField(required=False, help_text="Maximum IMDB rating (0.0-10.0)")
+    directors = serializers.CharField(required=False, help_text="Search by directors (comma-separated)")
+    cast = serializers.CharField(required=False, help_text="Search by cast members (comma-separated)")
+
+    def validate(self, data):
+        """Validate the search parameters."""
+        if not any(data.values()):
+            raise serializers.ValidationError("At least one search parameter must be provided")
+        
+        if 'min_rating' in data and 'max_rating' in data:
+            if data['min_rating'] > data['max_rating']:
+                raise serializers.ValidationError("min_rating cannot be greater than max_rating")
+        
+        return data
+
+
+class MovieSearchOutputSerializer(serializers.ModelSerializer):
+    """Output serializer for movie search results."""
+    class Meta:
+        model = Movie
+        fields = '__all__'
+        read_only_fields = ('created_at', 'updated_at', 'created_by', 'updated_by') 

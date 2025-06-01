@@ -5,7 +5,12 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .models import Movie
-from .serializers import MovieSerializer, ScrapeRequestSerializer
+from .serializers import (
+    MovieSerializer,
+    ScrapeRequestSerializer,
+    MovieSearchInputSerializer,
+    MovieSearchOutputSerializer
+)
 from .scraper import IMDbScraper
 import logging
 
@@ -59,159 +64,117 @@ class MovieViewSet(
             serializer.save()
 
     @swagger_auto_schema(
-        operation_description="Search movies by various parameters",
-        manual_parameters=[
-            openapi.Parameter(
-                'id',
-                openapi.IN_QUERY,
-                description="Search by movie ID",
-                type=openapi.TYPE_INTEGER,
-                required=False
-            ),
-            openapi.Parameter(
-                'title',
-                openapi.IN_QUERY,
-                description="Search by movie title (partial match)",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
-                'release_year',
-                openapi.IN_QUERY,
-                description="Filter by release year",
-                type=openapi.TYPE_INTEGER,
-                required=False
-            ),
-            openapi.Parameter(
-                'min_rating',
-                openapi.IN_QUERY,
-                description="Minimum IMDB rating (0.0-10.0)",
-                type=openapi.TYPE_NUMBER,
-                required=False
-            ),
-            openapi.Parameter(
-                'max_rating',
-                openapi.IN_QUERY,
-                description="Maximum IMDB rating (0.0-10.0)",
-                type=openapi.TYPE_NUMBER,
-                required=False
-            ),
-            openapi.Parameter(
-                'directors',
-                openapi.IN_QUERY,
-                description="Search by directors (comma-separated)",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
-                'cast',
-                openapi.IN_QUERY,
-                description="Search by cast members (comma-separated)",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-        ],
+        operation_description="List all movies",
         responses={
             200: MovieSerializer(many=True),
-            400: "Invalid parameters"
+            401: "Unauthorized"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Create a new movie",
+        request_body=MovieSerializer,
+        responses={
+            201: MovieSerializer,
+            400: "Bad Request",
+            401: "Unauthorized"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Update a movie",
+        request_body=MovieSerializer,
+        responses={
+            200: MovieSerializer,
+            400: "Bad Request",
+            401: "Unauthorized",
+            404: "Not Found"
+        }
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Partially update a movie",
+        request_body=MovieSerializer,
+        responses={
+            200: MovieSerializer,
+            400: "Bad Request",
+            401: "Unauthorized",
+            404: "Not Found"
+        }
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Search movies by various parameters",
+        query_serializer=MovieSearchInputSerializer(),
+        responses={
+            200: MovieSearchOutputSerializer(many=True),
+            400: "Invalid parameters",
+            401: "Unauthorized",
+            403: "Permission denied"
         }
     )
     @action(detail=False, methods=['get'])
     def search(self, request):
         """Search movies by various parameters."""
+        # Validate input using the serializer
+        input_serializer = MovieSearchInputSerializer(data=request.query_params)
+        if not input_serializer.is_valid():
+            return Response(
+                input_serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Get validated data
+        validated_data = input_serializer.validated_data
         queryset = Movie.objects.all()
         
-        # Get all search parameters
-        movie_id = request.query_params.get('id')
-        title = request.query_params.get('title')
-        release_year = request.query_params.get('release_year')
-        min_rating = request.query_params.get('min_rating')
-        max_rating = request.query_params.get('max_rating')
-        directors = request.query_params.get('directors')
-        cast = request.query_params.get('cast')
-
-        # Build query
-        if movie_id:
-            try:
-                queryset = queryset.filter(pk=int(movie_id))
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid movie ID'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        # Build query using validated data
+        if validated_data.get('id'):
+            queryset = queryset.filter(pk=validated_data['id'])
         
-        if title:
-            queryset = queryset.filter(title__icontains=title)
+        if validated_data.get('title'):
+            queryset = queryset.filter(title__icontains=validated_data['title'])
         
-        if release_year:
-            try:
-                year = int(release_year)
-                queryset = queryset.filter(release_year=year)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid release year'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        if validated_data.get('release_year'):
+            queryset = queryset.filter(release_year=validated_data['release_year'])
         
-        if min_rating:
-            try:
-                min_rating = float(min_rating)
-                queryset = queryset.filter(imdb_rating__gte=min_rating)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid minimum rating'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        if validated_data.get('min_rating'):
+            queryset = queryset.filter(imdb_rating__gte=validated_data['min_rating'])
         
-        if max_rating:
-            try:
-                max_rating = float(max_rating)
-                queryset = queryset.filter(imdb_rating__lte=max_rating)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid maximum rating'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        if validated_data.get('max_rating'):
+            queryset = queryset.filter(imdb_rating__lte=validated_data['max_rating'])
         
-        if directors:
-            queryset = queryset.filter(directors__icontains=directors)
+        if validated_data.get('directors'):
+            queryset = queryset.filter(directors__icontains=validated_data['directors'])
         
-        if cast:
-            queryset = queryset.filter(cast__icontains=cast)
+        if validated_data.get('cast'):
+            queryset = queryset.filter(cast__icontains=validated_data['cast'])
 
         # Paginate the results
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = MovieSearchOutputSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = MovieSearchOutputSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(
         operation_description="Scrape movies from IMDB by genre or keyword",
         request_body=ScrapeRequestSerializer,
         responses={
-            201: openapi.Response(
-                description="Movies scraped successfully",
-                schema=MovieSerializer(many=True)
-            ),
-            400: openapi.Response(
-                description="Bad request",
-                examples={
-                    "application/json": {
-                        "error": "Search parameter required"
-                    }
-                }
-            ),
-            500: openapi.Response(
-                description="Internal server error",
-                examples={
-                    "application/json": {
-                        "error": "Error message details"
-                    }
-                }
-            )
+            201: MovieSerializer(many=True),
+            400: "Bad Request",
+            401: "Unauthorized",
+            500: "Internal Server Error"
         }
     )
     @action(detail=False, methods=['post'])
@@ -276,140 +239,59 @@ class MovieViewSet(
 
     @swagger_auto_schema(
         operation_description="Delete movies by various parameters",
-        manual_parameters=[
-            openapi.Parameter(
-                'id',
-                openapi.IN_QUERY,
-                description="Delete by movie ID",
-                type=openapi.TYPE_INTEGER,
-                required=False
-            ),
-            openapi.Parameter(
-                'title',
-                openapi.IN_QUERY,
-                description="Delete by movie title (partial match)",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
-                'release_year',
-                openapi.IN_QUERY,
-                description="Delete by release year",
-                type=openapi.TYPE_INTEGER,
-                required=False
-            ),
-            openapi.Parameter(
-                'min_rating',
-                openapi.IN_QUERY,
-                description="Delete movies with rating >= value",
-                type=openapi.TYPE_NUMBER,
-                required=False
-            ),
-            openapi.Parameter(
-                'max_rating',
-                openapi.IN_QUERY,
-                description="Delete movies with rating <= value",
-                type=openapi.TYPE_NUMBER,
-                required=False
-            ),
-            openapi.Parameter(
-                'directors',
-                openapi.IN_QUERY,
-                description="Delete by directors (comma-separated)",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-            openapi.Parameter(
-                'cast',
-                openapi.IN_QUERY,
-                description="Delete by cast members (comma-separated)",
-                type=openapi.TYPE_STRING,
-                required=False
-            ),
-        ],
+        query_serializer=MovieSearchInputSerializer(),
         responses={
             200: openapi.Response(
                 description="Movies deleted successfully",
-                examples={
-                    "application/json": {
-                        "deleted_count": 5,
-                        "message": "Successfully deleted 5 movies"
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'deleted_count': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'message': openapi.Schema(type=openapi.TYPE_STRING)
                     }
-                }
+                )
             ),
             400: "Invalid parameters",
+            401: "Unauthorized",
             403: "Permission denied"
         }
     )
     @action(detail=False, methods=['delete'])
     def delete_by_params(self, request):
         """Delete movies by various parameters."""
-        queryset = Movie.objects.all()
-        
-        # Get all search parameters
-        movie_id = request.query_params.get('id')
-        title = request.query_params.get('title')
-        release_year = request.query_params.get('release_year')
-        min_rating = request.query_params.get('min_rating')
-        max_rating = request.query_params.get('max_rating')
-        directors = request.query_params.get('directors')
-        cast = request.query_params.get('cast')
-
-        # Build query
-        if movie_id:
-            try:
-                queryset = queryset.filter(pk=int(movie_id))
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid movie ID'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        
-        if title:
-            queryset = queryset.filter(title__icontains=title)
-        
-        if release_year:
-            try:
-                year = int(release_year)
-                queryset = queryset.filter(release_year=year)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid release year'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        
-        if min_rating:
-            try:
-                min_rating = float(min_rating)
-                queryset = queryset.filter(imdb_rating__gte=min_rating)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid minimum rating'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        
-        if max_rating:
-            try:
-                max_rating = float(max_rating)
-                queryset = queryset.filter(imdb_rating__lte=max_rating)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid maximum rating'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        
-        if directors:
-            queryset = queryset.filter(directors__icontains=directors)
-        
-        if cast:
-            queryset = queryset.filter(cast__icontains=cast)
-
-        # Check if any parameters were provided
-        if not any([movie_id, title, release_year, min_rating, max_rating, directors, cast]):
+        # Validate input using the serializer
+        input_serializer = MovieSearchInputSerializer(data=request.query_params)
+        if not input_serializer.is_valid():
             return Response(
-                {'error': 'At least one parameter must be provided'},
+                input_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+        # Get validated data
+        validated_data = input_serializer.validated_data
+        queryset = Movie.objects.all()
+        
+        # Build query using validated data
+        if validated_data.get('id'):
+            queryset = queryset.filter(pk=validated_data['id'])
+        
+        if validated_data.get('title'):
+            queryset = queryset.filter(title__icontains=validated_data['title'])
+        
+        if validated_data.get('release_year'):
+            queryset = queryset.filter(release_year=validated_data['release_year'])
+        
+        if validated_data.get('min_rating'):
+            queryset = queryset.filter(imdb_rating__gte=validated_data['min_rating'])
+        
+        if validated_data.get('max_rating'):
+            queryset = queryset.filter(imdb_rating__lte=validated_data['max_rating'])
+        
+        if validated_data.get('directors'):
+            queryset = queryset.filter(directors__icontains=validated_data['directors'])
+        
+        if validated_data.get('cast'):
+            queryset = queryset.filter(cast__icontains=validated_data['cast'])
 
         # Get the count before deletion
         count = queryset.count()
