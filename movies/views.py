@@ -9,10 +9,12 @@ from .serializers import (
     MovieSerializer,
     ScrapeRequestSerializer,
     MovieSearchInputSerializer,
-    MovieSearchOutputSerializer
+    MovieSearchOutputSerializer,
 )
 from .scraper import IMDbScraper
+from .permissions import IsAdminOrReadOnly
 import logging
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +38,7 @@ class MovieViewSet(
     """
     serializer_class = MovieSerializer
     queryset = Movie.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
     def get_permissions(self):
         """
@@ -45,7 +47,7 @@ class MovieViewSet(
         if self.action == 'search':
             permission_classes = [IsAuthenticated, CanSearchMovies]
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
@@ -64,10 +66,41 @@ class MovieViewSet(
             serializer.save()
 
     @swagger_auto_schema(
-        operation_description="List all movies",
+        operation_description="List all movies with pagination",
+        manual_parameters=[
+            openapi.Parameter(
+                'page',
+                openapi.IN_QUERY,
+                description="Page number for pagination",
+                type=openapi.TYPE_INTEGER,
+                default=1
+            ),
+            openapi.Parameter(
+                'page_size',
+                openapi.IN_QUERY,
+                description="Number of items per page",
+                type=openapi.TYPE_INTEGER,
+                default=10
+            )
+        ],
         responses={
-            200: MovieSerializer(many=True),
-            401: "Unauthorized"
+            200: openapi.Response(
+                description="Paginated list of movies",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'count': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'next': openapi.Schema(type=openapi.TYPE_STRING, nullable=True),
+                        'previous': openapi.Schema(type=openapi.TYPE_STRING, nullable=True),
+                        'results': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Items(type=openapi.TYPE_OBJECT)
+                        )
+                    }
+                )
+            ),
+            401: "Authentication credentials were not provided",
+            403: "You do not have permission to perform this action"
         }
     )
     def list(self, request, *args, **kwargs):
@@ -238,8 +271,8 @@ class MovieViewSet(
             )
 
     @swagger_auto_schema(
-        operation_description="Delete movies by various parameters",
-        query_serializer=MovieSearchInputSerializer(),
+        operation_description="Delete movies by parameters",
+        request_body=MovieSearchInputSerializer,
         responses={
             200: openapi.Response(
                 description="Movies deleted successfully",
@@ -256,51 +289,31 @@ class MovieViewSet(
             403: "Permission denied"
         }
     )
-    @action(detail=False, methods=['delete'])
+    @action(detail=False, methods=['post'])
     def delete_by_params(self, request):
-        """Delete movies by various parameters."""
-        # Validate input using the serializer
-        input_serializer = MovieSearchInputSerializer(data=request.query_params)
-        if not input_serializer.is_valid():
-            return Response(
-                input_serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        """Delete movies by parameters."""
+        serializer = MovieSearchInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Get validated data
-        validated_data = input_serializer.validated_data
-        queryset = Movie.objects.all()
-        
-        # Build query using validated data
-        if validated_data.get('id'):
-            queryset = queryset.filter(pk=validated_data['id'])
-        
-        if validated_data.get('title'):
-            queryset = queryset.filter(title__icontains=validated_data['title'])
-        
-        if validated_data.get('release_year'):
-            queryset = queryset.filter(release_year=validated_data['release_year'])
-        
-        if validated_data.get('min_rating'):
-            queryset = queryset.filter(imdb_rating__gte=validated_data['min_rating'])
-        
-        if validated_data.get('max_rating'):
-            queryset = queryset.filter(imdb_rating__lte=validated_data['max_rating'])
-        
-        if validated_data.get('directors'):
-            queryset = queryset.filter(directors__icontains=validated_data['directors'])
-        
-        if validated_data.get('cast'):
-            queryset = queryset.filter(cast__icontains=validated_data['cast'])
+        filters = serializer.validated_data
+        query = Q()
 
-        # Get the count before deletion
-        count = queryset.count()
-        
-        # Soft delete all matching movies
-        for movie in queryset:
-            movie.delete(updated_by=request.user)
+        if filters.get("title"):
+            query &= Q(title__icontains=filters["title"])
+        if filters.get("release_year"):
+            query &= Q(release_year=filters["release_year"])
+        if filters.get("min_rating"):
+            query &= Q(imdb_rating__gte=filters["min_rating"])
+        if filters.get("max_rating"):
+            query &= Q(imdb_rating__lte=filters["max_rating"])
+        if filters.get("directors"):
+            query &= Q(directors__icontains=filters["directors"])
+        if filters.get("cast"):
+            query &= Q(cast__icontains=filters["cast"])
 
-        return Response({
-            'deleted_count': count,
-            'message': f'Successfully deleted {count} movies'
-        })
+        deleted_count, _ = Movie.objects.filter(query).delete()
+        return Response(
+            {"message": f"Successfully deleted {deleted_count} movies"},
+            status=status.HTTP_200_OK,
+        )
