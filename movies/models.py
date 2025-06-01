@@ -18,9 +18,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=200)
     release_year = models.IntegerField()
     imdb_rating = models.FloatField()
-    # Stored as comma-separated values
     directors = models.TextField()
-    # Stored as comma-separated values  
     cast = models.TextField()
     plot_summary = models.TextField()
     imdb_url = models.URLField(max_length=500)
@@ -74,9 +72,3 @@ class Movie(models.Model):
         self.is_active = False
         self.updated_by = updated_by
         self.save(using=using)
-
-    def hard_delete(self, using=None, keep_parents=False):
-        """
-        Permanently delete the movie from the database
-        """
-        super().delete(using=using, keep_parents=keep_parents)

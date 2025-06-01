@@ -1,7 +1,7 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .models import Movie
@@ -12,74 +12,184 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class MovieViewSet(viewsets.ModelViewSet):
-    queryset = Movie.objects.all()  # Default queryset for URL resolution
+class CanSearchMovies(BasePermission):
+    """
+    Custom permission to only allow users with movies_search permission to use search.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.has_perm('movies.movies_search')
+
+
+class MovieViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet
+):
+    """
+    ViewSet for viewing and editing movies.
+    """
     serializer_class = MovieSerializer
+    queryset = Movie.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'search':
+            permission_classes = [IsAuthenticated, CanSearchMovies]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        # By default, only return active movies
+        """
+        Returns all active movies.
+        """
         return Movie.objects.all()
 
+    def perform_update(self, serializer):
+        """
+        Update a movie and set the updated_by field.
+        """
+        if hasattr(self.request, 'user') and self.request.user.is_authenticated:
+            serializer.save(updated_by=self.request.user)
+        else:
+            serializer.save()
+
     @swagger_auto_schema(
-        operation_description="Get all inactive (soft-deleted) movies",
-        responses={200: MovieSerializer(many=True)}
+        operation_description="Search movies by various parameters",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="Search by movie ID",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'title',
+                openapi.IN_QUERY,
+                description="Search by movie title (partial match)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'release_year',
+                openapi.IN_QUERY,
+                description="Filter by release year",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'min_rating',
+                openapi.IN_QUERY,
+                description="Minimum IMDB rating (0.0-10.0)",
+                type=openapi.TYPE_NUMBER,
+                required=False
+            ),
+            openapi.Parameter(
+                'max_rating',
+                openapi.IN_QUERY,
+                description="Maximum IMDB rating (0.0-10.0)",
+                type=openapi.TYPE_NUMBER,
+                required=False
+            ),
+            openapi.Parameter(
+                'directors',
+                openapi.IN_QUERY,
+                description="Search by directors (comma-separated)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'cast',
+                openapi.IN_QUERY,
+                description="Search by cast members (comma-separated)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+        ],
+        responses={
+            200: MovieSerializer(many=True),
+            400: "Invalid parameters"
+        }
     )
     @action(detail=False, methods=['get'])
-    def inactive(self, request):
-        """Get all inactive (soft-deleted) movies."""
-        queryset = Movie.all_objects.filter(is_active=False)
+    def search(self, request):
+        """Search movies by various parameters."""
+        queryset = Movie.objects.all()
+        
+        # Get all search parameters
+        movie_id = request.query_params.get('id')
+        title = request.query_params.get('title')
+        release_year = request.query_params.get('release_year')
+        min_rating = request.query_params.get('min_rating')
+        max_rating = request.query_params.get('max_rating')
+        directors = request.query_params.get('directors')
+        cast = request.query_params.get('cast')
+
+        # Build query
+        if movie_id:
+            try:
+                queryset = queryset.filter(pk=int(movie_id))
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid movie ID'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+        
+        if release_year:
+            try:
+                year = int(release_year)
+                queryset = queryset.filter(release_year=year)
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid release year'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if min_rating:
+            try:
+                min_rating = float(min_rating)
+                queryset = queryset.filter(imdb_rating__gte=min_rating)
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid minimum rating'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if max_rating:
+            try:
+                max_rating = float(max_rating)
+                queryset = queryset.filter(imdb_rating__lte=max_rating)
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid maximum rating'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if directors:
+            queryset = queryset.filter(directors__icontains=directors)
+        
+        if cast:
+            queryset = queryset.filter(cast__icontains=cast)
+
+        # Paginate the results
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+        
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def perform_destroy(self, instance):
-        # Override destroy to perform soft deletion
-        instance.delete(updated_by=self.request.user)
-
     @swagger_auto_schema(
-        operation_description="Restore a soft-deleted movie",
-        responses={
-            200: MovieSerializer(),
-            400: 'Movie is already active',
-            404: 'Movie not found'
-        }
-    )
-    @action(detail=True, methods=['post'])
-    def restore(self, request, pk=None):
-        """Restore a soft-deleted movie."""
-        movie = get_object_or_404(Movie.all_objects, pk=pk)
-        if movie.is_active:
-            return Response(
-                {'error': 'Movie is already active'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        movie.is_active = True
-        movie.updated_by = request.user
-        movie.save()
-        serializer = self.get_serializer(movie)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        operation_description="Permanently delete a movie from the database",
-        responses={
-            204: 'Movie deleted successfully',
-            404: 'Movie not found'
-        }
-    )
-    @action(detail=True, methods=['delete'])
-    def hard_delete(self, request, pk=None):
-        """Permanently delete a movie from the database."""
-        movie = get_object_or_404(Movie.all_objects, pk=pk)
-        movie.hard_delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @swagger_auto_schema(
-        operation_description=(
-            "Scrape movies from IMDB by genre or keyword"
-        ),
+        operation_description="Scrape movies from IMDB by genre or keyword",
         request_body=ScrapeRequestSerializer,
         responses={
             201: openapi.Response(
@@ -165,15 +275,150 @@ class MovieViewSet(viewsets.ModelViewSet):
             )
 
     @swagger_auto_schema(
-        operation_description="Get detailed information about a specific movie",
+        operation_description="Delete movies by various parameters",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="Delete by movie ID",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'title',
+                openapi.IN_QUERY,
+                description="Delete by movie title (partial match)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'release_year',
+                openapi.IN_QUERY,
+                description="Delete by release year",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'min_rating',
+                openapi.IN_QUERY,
+                description="Delete movies with rating >= value",
+                type=openapi.TYPE_NUMBER,
+                required=False
+            ),
+            openapi.Parameter(
+                'max_rating',
+                openapi.IN_QUERY,
+                description="Delete movies with rating <= value",
+                type=openapi.TYPE_NUMBER,
+                required=False
+            ),
+            openapi.Parameter(
+                'directors',
+                openapi.IN_QUERY,
+                description="Delete by directors (comma-separated)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'cast',
+                openapi.IN_QUERY,
+                description="Delete by cast members (comma-separated)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+        ],
         responses={
-            200: MovieSerializer(),
-            404: 'Movie not found'
+            200: openapi.Response(
+                description="Movies deleted successfully",
+                examples={
+                    "application/json": {
+                        "deleted_count": 5,
+                        "message": "Successfully deleted 5 movies"
+                    }
+                }
+            ),
+            400: "Invalid parameters",
+            403: "Permission denied"
         }
     )
-    @action(detail=True, methods=['get'])
-    def details(self, request, pk=None):
-        """Get detailed information about a specific movie."""
-        movie = get_object_or_404(Movie.objects.all(), pk=pk)
-        serializer = self.get_serializer(movie)
-        return Response(serializer.data)
+    @action(detail=False, methods=['delete'])
+    def delete_by_params(self, request):
+        """Delete movies by various parameters."""
+        queryset = Movie.objects.all()
+        
+        # Get all search parameters
+        movie_id = request.query_params.get('id')
+        title = request.query_params.get('title')
+        release_year = request.query_params.get('release_year')
+        min_rating = request.query_params.get('min_rating')
+        max_rating = request.query_params.get('max_rating')
+        directors = request.query_params.get('directors')
+        cast = request.query_params.get('cast')
+
+        # Build query
+        if movie_id:
+            try:
+                queryset = queryset.filter(pk=int(movie_id))
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid movie ID'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+        
+        if release_year:
+            try:
+                year = int(release_year)
+                queryset = queryset.filter(release_year=year)
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid release year'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if min_rating:
+            try:
+                min_rating = float(min_rating)
+                queryset = queryset.filter(imdb_rating__gte=min_rating)
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid minimum rating'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if max_rating:
+            try:
+                max_rating = float(max_rating)
+                queryset = queryset.filter(imdb_rating__lte=max_rating)
+            except ValueError:
+                return Response(
+                    {'error': 'Invalid maximum rating'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if directors:
+            queryset = queryset.filter(directors__icontains=directors)
+        
+        if cast:
+            queryset = queryset.filter(cast__icontains=cast)
+
+        # Check if any parameters were provided
+        if not any([movie_id, title, release_year, min_rating, max_rating, directors, cast]):
+            return Response(
+                {'error': 'At least one parameter must be provided'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Get the count before deletion
+        count = queryset.count()
+        
+        # Soft delete all matching movies
+        for movie in queryset:
+            movie.delete(updated_by=request.user)
+
+        return Response({
+            'deleted_count': count,
+            'message': f'Successfully deleted {count} movies'
+        })

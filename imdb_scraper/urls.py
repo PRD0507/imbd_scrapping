@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
+from movies.views import MovieViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework import permissions
+
+router = DefaultRouter()
+router.register(r'movies', MovieViewSet)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -26,7 +32,7 @@ schema_view = get_schema_view(
         default_version='v1',
         description="API for scraping and managing IMDB movie data",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@snippets.local"),
+        contact=openapi.Contact(email="contact@example.com"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,
@@ -35,7 +41,8 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('movies.urls')),
+    path('api/', include(router.urls)),
+    path('api/token/', obtain_auth_token, name='api_token_auth'),
     # Swagger URLs
     path(
         'swagger<format>/',
