@@ -130,31 +130,31 @@ class MovieViewSet(
             return Response(
                 input_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
-            )
-        
+            )       
+
         # Get validated data
         validated_data = input_serializer.validated_data
         queryset = Movie.objects.all()
-        
+
         # Build query using validated data
         if validated_data.get('id'):
             queryset = queryset.filter(pk=validated_data['id'])
-        
+
         if validated_data.get('title'):
             queryset = queryset.filter(title__icontains=validated_data['title'])
-        
+
         if validated_data.get('release_year'):
             queryset = queryset.filter(release_year=validated_data['release_year'])
-        
+
         if validated_data.get('min_rating'):
             queryset = queryset.filter(imdb_rating__gte=validated_data['min_rating'])
-        
+
         if validated_data.get('max_rating'):
             queryset = queryset.filter(imdb_rating__lte=validated_data['max_rating'])
-        
+
         if validated_data.get('directors'):
             queryset = queryset.filter(directors__icontains=validated_data['directors'])
-        
+
         if validated_data.get('cast'):
             queryset = queryset.filter(cast__icontains=validated_data['cast'])
 
@@ -163,7 +163,7 @@ class MovieViewSet(
         if page is not None:
             serializer = MovieSearchOutputSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        
+
         serializer = MovieSearchOutputSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -189,7 +189,7 @@ class MovieViewSet(
 
         # Get all validated data
         validated_data = serializer.validated_data
-        
+
         # Extract genre_or_keyword if provided
         genre_or_keyword = validated_data.get('genre_or_keyword')
         max_pages = validated_data.get('max_pages', 3)
@@ -214,7 +214,7 @@ class MovieViewSet(
                     else:
                         movie.created_by = None
                         movie.updated_by = None
-                    
+         
                     movie.save()
                     saved_movies.append(movie)
                     logger.info(f"Saved movie: {movie.title} ({movie.release_year})")
@@ -266,7 +266,7 @@ class MovieViewSet(
                 input_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         # Get validated data
         validated_data = input_serializer.validated_data
         queryset = Movie.objects.all()
