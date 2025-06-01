@@ -5,6 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
     help = 'Scrape movies from IMDb based on genre or keyword'
 
