@@ -1,92 +1,202 @@
-# IMDB Scraper
+# IMDB Movie Scraper API
 
-This project is a Django-based web application that scrapes movie data from IMDB and provides a RESTful API to search, filter, and manage movies.
+A Django REST API for scraping and managing movie data from IMDB. This project provides endpoints to search, scrape, and manage movie information with features like pagination, filtering, and authentication.
 
-## Project Setup
+## Features
 
-### Prerequisites
-- Python 3.11 or higher
+- 🔍 Search movies by various parameters (title, year, rating, etc.)
+- 📥 Scrape movies from IMDB by genre or keyword
+- 🔐 Token-based authentication
+- 📄 Pagination support
+- 🎯 Advanced filtering capabilities
+- 📚 Swagger/OpenAPI documentation
+- 🛡️ Permission-based access control
+- 📊 PostgreSQL database support
+- 🔄 CORS support for frontend integration
+
+## Prerequisites
+
+- Python 3.8+
+- PostgreSQL
 - pip (Python package manager)
 - virtualenv (recommended)
 
-### Installation Steps
-1. Clone the repository:
+## Project Setup
+
+1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/yourusername/imbd_scrapping.git
    cd imbd_scrapping
    ```
 
-2. Create and activate a virtual environment:
+2. **Create and activate virtual environment**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. Install dependencies:
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Run migrations:
+4. **Configure PostgreSQL**
+   - Create a database named `imdb_scraper_db`
+   - Create a user `imdb_user` with password `admin`
+   - Or update the database settings in `imdb_scraper/settings.py`
+
+5. **Run migrations**
    ```bash
    python manage.py migrate
    ```
 
-5. Start the development server:
+6. **Create superuser (optional)**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. **Run the development server**
    ```bash
    python manage.py runserver
    ```
 
-## API Endpoints
-
-### Movies API
-
-#### GET /api/movies/
-- **Description:** Lists all active movies.
-- **Logic:** Uses the `MovieManager` to filter out inactive movies.
-
-#### GET /api/movies/{id}/
-- **Description:** Retrieves a specific movie by ID.
-- **Logic:** Returns a 404 if the movie is not found or is inactive.
-
-#### POST /api/movies/
-- **Description:** Creates a new movie.
-- **Logic:** Validates input data and saves the movie to the database.
-
-#### PUT /api/movies/{id}/
-- **Description:** Updates an existing movie.
-- **Logic:** Validates input data and updates the movie in the database.
-
-#### DELETE /api/movies/{id}/
-- **Description:** Soft deletes a movie (sets `is_active` to `False`).
-- **Logic:** Updates the movie's `is_active` field and sets `updated_by` to the current user.
-
-### Scraper API
-
-#### GET /api/scrape/
-- **Description:** Triggers the IMDB scraper to fetch and store movie data.
-- **Logic:** Uses the `IMDbScraper` class to search IMDB, parse results, and save movies to the database.
-
 ## Project Structure
 
-- `movies/models.py`: Defines the `Movie` model and custom manager.
-- `movies/views.py`: Contains the `MovieViewSet` for handling API requests.
-- `movies/scraper.py`: Implements the `IMDbScraper` class for fetching and parsing IMDB data.
-- `movies/tests/`: Contains test cases for models, views, and the scraper.
+```
+imbd_scrapping/
+├── imdb_scraper/          # Main project directory
+│   ├── settings.py        # Project settings
+│   ├── urls.py           # Main URL configuration
+│   └── wsgi.py           # WSGI configuration
+├── movies/               # Movies app
+│   ├── models.py         # Movie model definition
+│   ├── views.py          # API views and endpoints
+│   ├── serializers.py    # Data serializers
+│   ├── permissions.py    # Custom permissions
+│   ├── scraper.py        # IMDB scraping logic
+│   └── management/       # Custom management commands
+├── requirements.txt      # Project dependencies
+└── manage.py            # Django management script
+```
+
+## API Endpoints
+
+### Authentication
+
+- `POST /api/token/` - Get authentication token
+  ```bash
+  curl -X POST http://localhost:8000/api/token/ \
+    -H "Content-Type: application/json" \
+    -d '{"username": "your_username", "password": "your_password"}'
+  ```
+
+### Movies
+
+- `GET /api/movies/` - List all movies (paginated)
+  ```bash
+  curl -X GET http://localhost:8000/api/movies/ \
+    -H "Authorization: Token your_token_here"
+  ```
+
+- `POST /api/movies/` - Create a new movie
+  ```bash
+  curl -X POST http://localhost:8000/api/movies/ \
+    -H "Authorization: Token your_token_here" \
+    -H "Content-Type: application/json" \
+    -d '{"title": "Movie Title", "release_year": 2024}'
+  ```
+
+- `GET /api/movies/search/` - Search movies
+  ```bash
+  curl -X GET "http://localhost:8000/api/movies/search/?title=inception&min_rating=8.0" \
+    -H "Authorization: Token your_token_here"
+  ```
+
+- `POST /api/movies/scrape/` - Scrape movies from IMDB
+  ```bash
+  curl -X POST http://localhost:8000/api/movies/scrape/ \
+    -H "Authorization: Token your_token_here" \
+    -H "Content-Type: application/json" \
+    -d '{"genre_or_keyword": "action", "max_pages": 3}'
+  ```
+
+## API Documentation
+
+Access the Swagger documentation at:
+- Swagger UI: `http://localhost:8000/swagger/`
+- ReDoc: `http://localhost:8000/redoc/`
+
+## Scraping Features
+
+The scraper supports:
+- Genre-based search
+- Keyword-based search
+- Year filtering
+- Rating filtering
+- Director filtering
+- Cast member filtering
+- Plot summary extraction
+
+## Permissions
+
+- **IsAdminOrReadOnly**: Only admin users can create/update/delete movies
+- **CanSearchMovies**: Custom permission for search functionality
+- **IsAuthenticated**: Required for all endpoints
+
+## Database Schema
+
+### Movie Model
+```python
+class Movie(models.Model):
+    title = models.CharField(max_length=200)
+    release_year = models.IntegerField()
+    imdb_rating = models.FloatField(null=True)
+    directors = models.TextField(null=True)
+    cast = models.TextField(null=True)
+    plot_summary = models.TextField(null=True)
+    imdb_url = models.URLField(null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+```
+
+## Error Handling
+
+The API includes comprehensive error handling for:
+- Authentication failures
+- Invalid input data
+- Scraping errors
+- Database operations
+- Permission violations
+
+## Logging
+
+Logs are stored in `debug.log` with the following levels:
+- INFO: General operations
+- WARNING: Non-critical issues
+- ERROR: Critical issues
 
 ## Testing
 
-Run tests with:
+Run tests using:
 ```bash
-pytest
+python manage.py test
 ```
 
-Check coverage with:
-```bash
-coverage run -m pytest
-coverage report -m
-```
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, please open an issue in the GitHub repository or contact the maintainers. 
